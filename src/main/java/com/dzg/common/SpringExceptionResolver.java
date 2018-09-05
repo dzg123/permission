@@ -1,5 +1,6 @@
 package com.dzg.common;
 
+import com.dzg.exception.ParamException;
 import com.dzg.exception.PermissionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -17,7 +18,7 @@ public class SpringExceptionResolver implements HandlerExceptionResolver {
         //.json, .page
         // 这里我们要求项目中所有请求json数据，都使用.json结尾
         if (url.endsWith(".json")){
-            if(e instanceof PermissionException){
+            if(e instanceof PermissionException || e instanceof ParamException){
                 JsonData result = JsonData.fail(e.getMessage());
                 mv = new ModelAndView("jsonView", result.toMap());
             }else {
