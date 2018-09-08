@@ -161,4 +161,10 @@
       operate_ip = #{operateIp,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="findByKeyword" parameterType="string" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM sys_user
+    WHERE telephone =#{keyword}
+    OR mail = #{keyword}
+  </select>
 </mapper>
