@@ -11,6 +11,13 @@
         <param-value>classpath:spring/applicationContext.xml</param-value>
     </context-param>
     <!-- spring mvc 配置 -->
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>default</servlet-name>-->
+        <!--<url-pattern>*.js</url-pattern>-->
+        <!--<url-pattern>*.css</url-pattern>-->
+        <!--<url-pattern>/assets/*"</url-pattern>-->
+        <!--<url-pattern>/images/*</url-pattern>-->
+    <!--</servlet-mapping>-->
     <servlet>
         <servlet-name>spring</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

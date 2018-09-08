@@ -10,21 +10,21 @@
     <!-- 启动注解驱动的spring mvc 功能 -->
     <mvc:annotation-driven/>
 
-    <!--<mvc:interceptors>-->
-        <!--<bean class="com.dzg.common.HttpInterceptor" />-->
-    <!--</mvc:interceptors>-->
-
+    <mvc:interceptors>
+        <bean class="com.dzg.common.HttpInterceptor" />
+    </mvc:interceptors>
+    <!--<mvc:default-servlet-handler/>-->
     <!-- 启动包扫描功能 -->
     <context:component-scan base-package="com.dzg.controller" />
     <context:component-scan base-package="com.dzg.service" />
 
-    <!--<mvc:resources location="/js/" mapping="/js/**"/>-->
-    <!--<mvc:resources location="/css/" mapping="/css/**"/>-->
-    <!--<mvc:resources location="/bootstrap3.3.5/" mapping="/bootstrap3.3.5/**"/>-->
-    <!--<mvc:resources location="/assets/" mapping="/assets/**"/>-->
+    <mvc:resources location="/js/" mapping="/js/**"/>
+    <mvc:resources location="/css/" mapping="/css/**"/>
+    <mvc:resources location="/bootstrap3.3.5/" mapping="/bootstrap3.3.5/**"/>
+    <mvc:resources location="/assets/" mapping="/assets/**"/>
     <!--<mvc:resources location="/ztree/" mapping="/ztree/**"/>-->
 
-    <!--<bean class="com.mmall.common.ApplicationContextHelper" lazy-init="false" />-->
+    <bean class="com.dzg.common.ApplicationContextHelper" lazy-init="false" />
 
     <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />-->
 
