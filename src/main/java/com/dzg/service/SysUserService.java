@@ -2,11 +2,13 @@ package com.dzg.service;
 
 import com.dzg.beans.PageQuery;
 import com.dzg.beans.PageResult;
+import com.dzg.common.RequestHolder;
 import com.dzg.dao.SysUserMapper;
 import com.dzg.domain.SysUser;
 import com.dzg.exception.ParamException;
 import com.dzg.param.UserParam;
 import com.dzg.util.BeanValidator;
+import com.dzg.util.IpUtil;
 import com.dzg.util.MD5Util;
 import com.dzg.util.PasswordUtil;
 import com.google.common.base.Preconditions;
@@ -36,8 +38,8 @@ public class SysUserService {
         SysUser user = SysUser.builder().username(param.getUsername()).telephone(param.getTelephone())
                 .mail(param.getMail()).password(encryptedPassword).deptId(param.getDeptId()).status(param.getStatus())
                 .remark(param.getRemark()).build();
-        user.setOperator("system");//TODO
-        user.setOperateIp("127.0.0.1");//TODO
+        user.setOperator(RequestHolder.getCurrentUser().getUsername());
+        user.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         user.setOperateTime(new Date());
 //        //TODO:sendmail
         sysUserMapper.insertSelective(user);
@@ -55,8 +57,8 @@ public class SysUserService {
         Preconditions.checkNotNull(before, "待更新的用户不存在");
         SysUser after = SysUser.builder().id(param.getId()).username(param.getUsername()).telephone(param.getTelephone()).mail(param.getMail())
                 .deptId(param.getDeptId()).status(param.getStatus()).remark(param.getRemark()).build();
-        after.setOperator("system update");//TODO
-        after.setOperateIp("127.0.0.1");//TODO
+        after.setOperator(RequestHolder.getCurrentUser().getUsername());
+        after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         after.setOperateTime(new Date());
         sysUserMapper.updateByPrimaryKeySelective(after);
 //        sysLogService.saveUserLog(before, after);
