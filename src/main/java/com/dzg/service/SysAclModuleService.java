@@ -1,6 +1,7 @@
 package com.dzg.service;
 
 import com.dzg.common.RequestHolder;
+import com.dzg.dao.SysAclMapper;
 import com.dzg.dao.SysAclModuleMapper;
 import com.dzg.domain.SysAclModule;
 import com.dzg.exception.ParamException;
@@ -21,9 +22,11 @@ import java.util.List;
 public class SysAclModuleService {
     @Resource
     private SysAclModuleMapper sysAclModuleMapper;
-    public void save(AclModuleParam param){
+    @Resource
+    private SysAclMapper sysAclMapper;
+    public void save(AclModuleParam param) {
         BeanValidator.check(param);
-        if(checkExist(param.getParentId(), param.getName(), param.getId())) {
+        if (checkExist(param.getParentId(), param.getName(), param.getId())) {
             throw new ParamException("同一层级下存在相同名称的权限模块");
         }
         SysAclModule aclModule = SysAclModule.builder().name(param.getName()).parentId(param.getParentId()).seq(param.getSeq())
@@ -35,9 +38,10 @@ public class SysAclModuleService {
         sysAclModuleMapper.insertSelective(aclModule);
 //        sysLogService.saveAclModuleLog(null, aclModule);
     }
-    public void update(AclModuleParam param){
+
+    public void update(AclModuleParam param) {
         BeanValidator.check(param);
-        if(checkExist(param.getParentId(), param.getName(), param.getId())) {
+        if (checkExist(param.getParentId(), param.getName(), param.getId())) {
             throw new ParamException("同一层级下存在相同名称的权限模块");
         }
         SysAclModule before = sysAclModuleMapper.selectByPrimaryKey(param.getId());
@@ -52,8 +56,9 @@ public class SysAclModuleService {
 
         updateWithChild(before, after);
     }
+
     @Transactional
-    public void updateWithChild(SysAclModule before, SysAclModule after){
+    public void updateWithChild(SysAclModule before, SysAclModule after) {
         String newLevelPrefix = after.getLevel();
         String oldLevelPrefix = before.getLevel();
         if (!after.getLevel().equals(before.getLevel())) {
@@ -71,14 +76,28 @@ public class SysAclModuleService {
         }
         sysAclModuleMapper.updateByPrimaryKeySelective(after);
     }
-    private boolean checkExist(Integer parentId, String aclModuleName, Integer deptId){
-        return sysAclModuleMapper.countByNameAndParentId(parentId, aclModuleName, deptId) > 0;
+
+    private boolean checkExist(Integer parentId, String aclModuleName, Integer deptId) {
+        int count = sysAclModuleMapper.countByNameAndParentId(parentId, aclModuleName, deptId);
+        return count > 0;
     }
+
     private String getLevel(Integer aclModuleId) {
         SysAclModule aclModule = sysAclModuleMapper.selectByPrimaryKey(aclModuleId);
         if (aclModule == null) {
             return null;
         }
         return aclModule.getLevel();
+    }
+    public void delete(int aclModuleId) {
+        SysAclModule aclModule = sysAclModuleMapper.selectByPrimaryKey(aclModuleId);
+        Preconditions.checkNotNull(aclModule, "待删除的权限模块不存在，无法删除");
+        if(sysAclModuleMapper.countByParentId(aclModule.getId()) > 0) {
+            throw new ParamException("当前模块下面有子模块，无法删除");
+        }
+        if (sysAclMapper.countByAclModuleId(aclModule.getId()) > 0) {
+            throw new ParamException("当前模块下面有用户，无法删除");
+        }
+        sysAclModuleMapper.deleteByPrimaryKey(aclModuleId);
     }
 }

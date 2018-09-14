@@ -49,7 +49,7 @@ public class SysAclModuleController {
     @RequestMapping("/delete.json")
     @ResponseBody
     public JsonData delete(@RequestParam("id") int id) {
-//        sysAclModuleService.delete(id);
+        sysAclModuleService.delete(id);
         return JsonData.success();
     }
 }
