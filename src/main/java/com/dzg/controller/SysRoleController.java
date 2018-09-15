@@ -3,6 +3,7 @@ package com.dzg.controller;
 import com.dzg.common.JsonData;
 import com.dzg.param.RoleParam;
 import com.dzg.service.SysRoleService;
+import com.dzg.service.SysTreeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -23,6 +24,8 @@ import java.util.Set;
 public class SysRoleController {
     @Resource
     private SysRoleService sysRoleService;
+    @Resource
+    private SysTreeService sysTreeService;
     @RequestMapping("role.page")
     public ModelAndView page() {
         return new ModelAndView("role");
@@ -46,5 +49,10 @@ public class SysRoleController {
     @ResponseBody
     public JsonData list() {
         return JsonData.success(sysRoleService.getAll());
+    }
+    @RequestMapping("/roleTree.json")
+    @ResponseBody
+    public JsonData roleTree(@RequestParam("roleId") int roleId) {
+        return JsonData.success(sysTreeService.roleTree(roleId));
     }
 }
