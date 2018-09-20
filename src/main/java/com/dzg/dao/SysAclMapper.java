@@ -28,4 +28,6 @@ public interface SysAclMapper {
     List<SysAcl> getByIdList(@Param("idList") List<Integer> userAclIdList);
 
     List<SysAcl> getAll();
+
+    List<SysAcl> getByUrl(@Param("url")String url);
 }

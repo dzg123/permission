@@ -19,4 +19,6 @@ public interface SysRoleAclMapper {
     int updateByPrimaryKey(SysRoleAcl record);
 
     List<Integer> getAclIdListByRoleIdList(@Param("roleIdList") List<Integer> userRoleIdList);
+
+    List<Integer> getRoleIdListByAclId(@Param("aclId")int aclId);
 }

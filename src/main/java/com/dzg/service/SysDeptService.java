@@ -2,6 +2,7 @@ package com.dzg.service;
 
 import com.dzg.common.RequestHolder;
 import com.dzg.dao.SysDeptMapper;
+import com.dzg.dao.SysUserMapper;
 import com.dzg.domain.SysDept;
 import com.dzg.exception.ParamException;
 import com.dzg.param.DeptParam;
@@ -22,6 +23,8 @@ public class SysDeptService {
     @Resource
     private SysDeptMapper sysDeptMapper;
 
+    @Resource
+    private SysUserMapper sysUserMapper;
     public void save(DeptParam param) {
         BeanValidator.check(param);
         if (checkExist(param.getParentId(), param.getName(), param.getId())) {
@@ -44,7 +47,7 @@ public class SysDeptService {
         SysDept before = sysDeptMapper.selectByPrimaryKey(param.getId());
         Preconditions.checkNotNull(before, "待更新的部门不存在");
 //        TODO:为什么要判断两次
-        if(checkExist(param.getParentId(), param.getName(), param.getId())) {
+        if (checkExist(param.getParentId(), param.getName(), param.getId())) {
             throw new ParamException("同一层级下存在相同名称的部门");
         }
         SysDept after = SysDept.builder().id(param.getId()).name(param.getName()).parentId(param.getParentId())
@@ -89,5 +92,17 @@ public class SysDeptService {
             return "";
         }
         return dept.getLevel();
+    }
+
+    public void delete(int deptId) {
+        SysDept dept = sysDeptMapper.selectByPrimaryKey(deptId);
+        Preconditions.checkNotNull(dept, "待删除部门不存在");
+        if (sysDeptMapper.countByParentId(dept.getId()) > 0) {
+            throw new ParamException("当前部门下面有子部门，无法删除");
+        }
+        if (sysUserMapper.countByDeptId(dept.getId()) > 0) {
+            throw new ParamException("当前部门下面有子部门，无法删除");
+        }
+        sysDeptMapper.deleteByPrimaryKey(deptId);
     }
 }

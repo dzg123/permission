@@ -32,6 +32,19 @@ public class SysTreeService {
     @Resource
     private SysAclMapper sysAclMapper;
 
+    public List<AclModuleLevelDto> userAclTree(int userId) {
+        List<SysAcl> userAclList = sysCoreService.getUserAclList(userId);
+        ArrayList<AclDto> aclDtoList = Lists.newArrayList();
+        for (SysAcl acl : userAclList) {
+            AclDto dto = AclDto.adapt(acl);
+            dto.setHasAcl(true);
+            dto.setChecked(true);
+            aclDtoList.add(dto);
+        }
+        return aclListToTree(aclDtoList);
+
+    }
+
     public List<AclModuleLevelDto> roleTree(int roleId) {
 //  1.当前用户已分配的权限点
         List<SysAcl> userAclList = sysCoreService.getCurrentUserAclList();
@@ -62,7 +75,7 @@ public class SysTreeService {
         List<AclModuleLevelDto> aclModuleLevelList = aclModuleTree();
         Multimap<Integer, AclDto> moduleIdAclMap = ArrayListMultimap.create();
         for (AclDto acl : aclDtoList) {
-            if (acl.getStatus() == 1){
+            if (acl.getStatus() == 1) {
                 moduleIdAclMap.put(acl.getAclModuleId(), acl);
             }
 
@@ -73,16 +86,16 @@ public class SysTreeService {
     }
 
     private void bindAclsWithOrder(List<AclModuleLevelDto> aclModuleLevelList, Multimap<Integer, AclDto> moduleIdAclMap) {
-        if(CollectionUtils.isEmpty(aclModuleLevelList)){
+        if (CollectionUtils.isEmpty(aclModuleLevelList)) {
             return;
         }
         for (AclModuleLevelDto dto : aclModuleLevelList) {
             List<AclDto> aclDtoList = (List<AclDto>) moduleIdAclMap.get(dto.getId());
-            if(CollectionUtils.isNotEmpty(aclDtoList)){
-                Collections.sort(aclDtoList,aclSeqComparator);
+            if (CollectionUtils.isNotEmpty(aclDtoList)) {
+                Collections.sort(aclDtoList, aclSeqComparator);
                 dto.setAclList(aclDtoList);
             }
-            bindAclsWithOrder(dto.getAclModuleList(),moduleIdAclMap);
+            bindAclsWithOrder(dto.getAclModuleList(), moduleIdAclMap);
         }
 
     }
@@ -199,11 +212,11 @@ public class SysTreeService {
             return o1.getSeq() - o2.getSeq();
         }
     };
-    public Comparator<AclDto> aclSeqComparator = new Comparator<AclDto>(){
+    public Comparator<AclDto> aclSeqComparator = new Comparator<AclDto>() {
 
         @Override
         public int compare(AclDto o1, AclDto o2) {
-            return o1.getSeq()-o2.getSeq();
+            return o1.getSeq() - o2.getSeq();
         }
     };
 }
