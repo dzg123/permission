@@ -23,6 +23,8 @@ import java.util.List;
 public class SysUserService {
     @Resource
     private SysUserMapper sysUserMapper;
+    @Resource
+    private SysLogService sysLogService;
 
     public void save(UserParam param) {
         BeanValidator.check(param);
@@ -43,6 +45,7 @@ public class SysUserService {
         user.setOperateTime(new Date());
 //        //TODO:sendmail
         sysUserMapper.insertSelective(user);
+        sysLogService.saveUserLog(null,user);
     }
 
     public void update(UserParam param) {
@@ -61,7 +64,7 @@ public class SysUserService {
         after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         after.setOperateTime(new Date());
         sysUserMapper.updateByPrimaryKeySelective(after);
-//        sysLogService.saveUserLog(before, after);
+        sysLogService.saveUserLog(before, after);
     }
 
     public boolean checkEmailExist(String mail, Integer userId) {
@@ -75,17 +78,19 @@ public class SysUserService {
     public SysUser findByKeyword(String keyword) {
         return sysUserMapper.findByKeyword(keyword);
     }
-    public PageResult<SysUser> getPageByDeptId(int deptId, PageQuery page){
+
+    public PageResult<SysUser> getPageByDeptId(int deptId, PageQuery page) {
         BeanValidator.check(page);
         int count = sysUserMapper.countByDeptId(deptId);
-        if(count > 0){
+        if (count > 0) {
             List<SysUser> list = sysUserMapper.getPageByDeptId(deptId, page);
             return PageResult.<SysUser>builder().total(count).data(list).build();
         }
         return PageResult.<SysUser>builder().build();
 
     }
-    public List<SysUser> getAll(){
+
+    public List<SysUser> getAll() {
         return sysUserMapper.getAll();
     }
 }

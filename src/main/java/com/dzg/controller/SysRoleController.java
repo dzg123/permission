@@ -3,10 +3,7 @@ package com.dzg.controller;
 import com.dzg.common.JsonData;
 import com.dzg.domain.SysUser;
 import com.dzg.param.RoleParam;
-import com.dzg.service.SysRoleService;
-import com.dzg.service.SysRoleUserService;
-import com.dzg.service.SysTreeService;
-import com.dzg.service.SysUserService;
+import com.dzg.service.*;
 import com.dzg.util.StringUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -38,6 +35,8 @@ public class SysRoleController {
     private SysRoleUserService sysRoleUserService;
     @Resource
     private SysUserService sysUserService;
+    @Resource
+    private SysRoleAclService sysRoleAclService;
 
     @RequestMapping("role.page")
     public ModelAndView page() {
@@ -73,7 +72,9 @@ public class SysRoleController {
     @RequestMapping("/changeAcls.json")
     @ResponseBody
     public JsonData changeAcls(@RequestParam("roleId") int roleId, @RequestParam("aclIds") String aclIds) {
-        return JsonData.success(sysTreeService.roleTree(roleId));
+        List<Integer> aclIdList = StringUtil.splitToListInt(aclIds);
+        sysRoleAclService.changeRoleAcls(roleId, aclIdList);
+        return JsonData.success();
     }
 
     @RequestMapping("/changeUsers.json")

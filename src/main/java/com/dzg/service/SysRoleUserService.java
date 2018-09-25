@@ -1,5 +1,6 @@
 package com.dzg.service;
 
+import com.dzg.beans.LogType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 //import com.dzg.beans.LogType;
@@ -70,7 +71,7 @@ public class SysRoleUserService {
     }
     private void saveRoleUserLog(int roleId, List<Integer> before, List<Integer> after) {
         SysLogWithBLOBs sysLog = new SysLogWithBLOBs();
-//        sysLog.setType(LogType.TYPE_ROLE_USER);
+        sysLog.setType(LogType.TYPE_ROLE_USER);
         sysLog.setTargetId(roleId);
         sysLog.setOldValue(before == null ? "" : JsonMapper.obj2String(before));
         sysLog.setNewValue(after == null ? "" : JsonMapper.obj2String(after));

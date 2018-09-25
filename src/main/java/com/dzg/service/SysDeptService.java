@@ -25,6 +25,8 @@ public class SysDeptService {
 
     @Resource
     private SysUserMapper sysUserMapper;
+    @Resource
+    private SysLogService sysLogService;
     public void save(DeptParam param) {
         BeanValidator.check(param);
         if (checkExist(param.getParentId(), param.getName(), param.getId())) {
@@ -37,6 +39,7 @@ public class SysDeptService {
         dept.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         dept.setOperateTime(new Date());
         sysDeptMapper.insertSelective(dept);
+        sysLogService.saveDeptLog(null,dept);
     }
 
     public void update(DeptParam param) {
@@ -57,7 +60,7 @@ public class SysDeptService {
         after.setOperateIp(IpUtil.getRemoteIp(RequestHolder.getCurrentRequest()));
         after.setOperateTime(new Date());
         updateWithChild(before, after);
-
+        sysLogService.saveDeptLog(before,after);
     }
 
     @Transactional
@@ -104,5 +107,6 @@ public class SysDeptService {
             throw new ParamException("当前部门下面有子部门，无法删除");
         }
         sysDeptMapper.deleteByPrimaryKey(deptId);
+//        sysLogService.saveDeptLog(dept,null);
     }
 }
